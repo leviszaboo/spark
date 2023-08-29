@@ -1,26 +1,82 @@
-const express = require('express');
-const { createYoga } = require('graphql-yoga')
-const { 
-  GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLString,
-  GraphQLList,
-  GraphQLInt,
-  GraphQLNonNull
-} = require("graphql");
-const bodyParser = require('body-parser');
+import express from "express";
+import { createYoga } from "graphql-yoga";
+import {
+    GraphQLSchema,
+    GraphQLObjectType,
+    GraphQLString,
+    GraphQLList,
+    GraphQLInt,
+    GraphQLFloat,
+    GraphQLNonNull,
+    GraphQLInputObjectType
+} from "graphql"
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+
+import { Event } from "./models/event.js";
 
 const app = express();
 
 app.use(bodyParser.json());
+
+const EventType = new GraphQLObjectType({
+  name: "Event",
+  fields: () => ({
+    _id: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    title: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    description: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    price: {
+      type: GraphQLNonNull(GraphQLFloat)
+    },
+    date: {
+      type: GraphQLNonNull(GraphQLString)
+    }
+  })
+})
+
+const EventInputType = new GraphQLInputObjectType({
+  name: "EventInput",
+  description: "Input type to create a new event",
+  fields: () => ({
+    title: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    description: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    price: {
+      type: GraphQLNonNull(GraphQLFloat)
+    },
+    date: {
+      type: GraphQLNonNull(GraphQLString)
+    }
+  })
+})
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
   description: "Root Query",
   fields: () => ({
     events: {
-      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString))),
-      resolve: () => ["Cooking", "Cruising", "Biking"]
+      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(EventType))),
+      resolve: async () => { 
+        return Event
+          .find()
+          .then((events) => {
+            return events.map((event) => {
+              return {...event._doc}
+            })
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     }
   }),
 })
@@ -30,14 +86,37 @@ const RootMutationType = new GraphQLObjectType({
   description: "Root Mutation",
   fields: () => ({
     createEvent: {
-      type: GraphQLString,
+      type: EventType,
       description: "Create a new event",
       args: {
-        name: {
-          type: GraphQLString
+        eventInput: {
+          type: EventInputType
         }
       },
-      resolve: (args) => args.name
+      resolve: (_, args) => {
+        const {
+          title,
+          description,
+          date,
+          price,
+        } = args.eventInput
+
+        const event = new Event({
+          title: title,
+          description: description,
+          price: +price,
+          date: date
+        });
+        event
+          .save()
+          .then((result) => {
+            return {...result._doc}
+          })
+          .catch((err) => {
+            console.log(err)
+          });
+        return event
+      }
     }
   })
 })
@@ -52,4 +131,11 @@ app.all('/graphql', createYoga({
   graphiql: true
 })); 
 
-app.listen({port: 3000});
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER
+  }:${process.env.MONGO_PASSWORD
+  }@cluster0.kvn17mp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+).then(() => {
+  app.listen({port: 3000});
+}).catch((err) => {
+   console.log(err)
+})
