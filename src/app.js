@@ -12,15 +12,47 @@ import {
 } from "graphql"
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs"
 
 import { Event } from "./models/event.js";
+import { User } from "./models/user.js";
 
 const app = express();
 
 app.use(bodyParser.json());
 
+const UserType = new GraphQLObjectType({
+  name: "User",
+  description: "Information about a user.",
+  fields: () => ({
+    _id: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    email: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    password: {
+      type: GraphQLString
+    }
+  })
+})
+
+const UserInputType = new GraphQLInputObjectType({
+  name: "UserInput",
+  description: "Input type to create a new user",
+  fields: () => ({
+    email: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    password: {
+      type: GraphQLNonNull(GraphQLString)
+    }
+  })
+})
+
 const EventType = new GraphQLObjectType({
   name: "Event",
+  description: "Information about an event.",
   fields: () => ({
     _id: {
       type: GraphQLNonNull(GraphQLString)
@@ -35,6 +67,9 @@ const EventType = new GraphQLObjectType({
       type: GraphQLNonNull(GraphQLFloat)
     },
     date: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    creator: {
       type: GraphQLNonNull(GraphQLString)
     }
   })
@@ -70,11 +105,11 @@ const RootQueryType = new GraphQLObjectType({
           .find()
           .then((events) => {
             return events.map((event) => {
-              return {...event._doc}
+              return { ...event._doc }
             })
           })
           .catch((err) => {
-            console.log(err)
+            throw err
           })
       }
     }
@@ -87,13 +122,15 @@ const RootMutationType = new GraphQLObjectType({
   fields: () => ({
     createEvent: {
       type: EventType,
+      name: "CreateEvent",
       description: "Create a new event",
       args: {
         eventInput: {
           type: EventInputType
         }
       },
-      resolve: (_, args) => {
+      resolve: async (_, args) => {
+        try {
         const {
           title,
           description,
@@ -102,20 +139,64 @@ const RootMutationType = new GraphQLObjectType({
         } = args.eventInput
 
         const event = new Event({
-          title: title,
-          description: description,
+          title,
+          description,
           price: +price,
-          date: date
+          date,
+          creator: "64ee6c2fa48a82b53729cbc1"
         });
-        event
-          .save()
-          .then((result) => {
-            return {...result._doc}
-          })
-          .catch((err) => {
-            console.log(err)
+
+          const savedEvent = await event.save();
+          const user = await User.findById("64ee6c2fa48a82b53729cbc1");
+    
+          if (!user) {
+            throw new Error("User not found");
+          }
+    
+          user.createdEvents.push(savedEvent);
+          await user.save();
+    
+          return savedEvent;
+        } catch (err) {
+          throw err;
+        }
+      }
+    },
+    createUser: {
+      type: UserType,
+      name: 'CreateUser',
+      description: "Create a new user",
+      args: {
+        userInput: {
+          type: UserInputType
+        }
+      },
+      resolve: async (_, args) => {
+        try {
+          const {
+            email,
+            password
+          } = args.userInput;
+
+          const existingUser = await User.findOne({ email });
+
+          if (existingUser) {
+            throw new Error("User already exists.");
+          }
+
+          const hashedPassword = await bcrypt.hash(password, 12);
+
+          const user = new User({
+            email,
+            password: hashedPassword
           });
-        return event
+
+          const savedUser = await user.save();
+
+          return { ...savedUser._doc, password: null };
+        } catch (err) {
+          throw err;
+        }
       }
     }
   })
