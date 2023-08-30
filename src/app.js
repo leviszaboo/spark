@@ -33,6 +33,17 @@ const UserType = new GraphQLObjectType({
     },
     password: {
       type: GraphQLString
+    },
+    createdEvents: {
+      type: GraphQLList(GraphQLNonNull(EventType)),
+      resolve: async (user) => {
+        try {
+          const events = await Event.find({ creator: user._id });
+          return events.map(event => ({ ...event._doc }));
+        } catch (err) {
+          throw err;
+        }
+    }
     }
   })
 })
@@ -70,7 +81,7 @@ const EventType = new GraphQLObjectType({
       type: GraphQLNonNull(GraphQLString)
     },
     creator: {
-      type: GraphQLNonNull(GraphQLString)
+      type: GraphQLNonNull(UserType)
     }
   })
 })
@@ -101,16 +112,12 @@ const RootQueryType = new GraphQLObjectType({
     events: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(EventType))),
       resolve: async () => { 
-        return Event
-          .find()
-          .then((events) => {
-            return events.map((event) => {
-              return { ...event._doc }
-            })
-          })
-          .catch((err) => {
-            throw err
-          })
+        try {
+          const events = await Event.find().populate('creator');
+          return events.map(event => ({ ...event._doc }));
+        } catch (err) {
+          throw err;
+        }
       }
     }
   }),
@@ -131,20 +138,20 @@ const RootMutationType = new GraphQLObjectType({
       },
       resolve: async (_, args) => {
         try {
-        const {
-          title,
-          description,
-          date,
-          price,
-        } = args.eventInput
+          const {
+            title,
+            description,
+            date,
+            price,
+          } = args.eventInput
 
-        const event = new Event({
-          title,
-          description,
-          price: +price,
-          date,
-          creator: "64ee6c2fa48a82b53729cbc1"
-        });
+          const event = new Event({
+            title,
+            description,
+            price: +price,
+            date,
+            creator: "64ee6c2fa48a82b53729cbc1"
+          });
 
           const savedEvent = await event.save();
           const user = await User.findById("64ee6c2fa48a82b53729cbc1");
@@ -212,7 +219,8 @@ app.all('/graphql', createYoga({
   graphiql: true
 })); 
 
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER
+mongoose.connect(
+  `mongodb+srv://${process.env.MONGO_USER
   }:${process.env.MONGO_PASSWORD
   }@cluster0.kvn17mp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
 ).then(() => {

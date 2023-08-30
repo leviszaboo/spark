@@ -4,24 +4,24 @@ const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
     title: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     description: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     price: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     date: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     creator: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     }
 });
 
