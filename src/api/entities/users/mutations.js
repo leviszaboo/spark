@@ -20,7 +20,7 @@ const CreateUser = {
 export const UserMutation = new GraphQLObjectType({
   name: 'UserMutation',
   description: 'The root user mutation.',
-  fields: {
+  fields: () => ({
     create: CreateUser
-  }
+  })
 })

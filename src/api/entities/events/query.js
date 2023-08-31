@@ -17,7 +17,7 @@ const GetEvents = {
 export const EventQuery = new GraphQLObjectType({
   name: "EventQuery",
   description: "The root event query.",
-  fields: {
+  fields: () => ({
     get: GetEvents
-  }
+  })
 })

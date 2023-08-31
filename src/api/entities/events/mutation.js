@@ -14,14 +14,14 @@ const CreateEvent = {
     }
   },
   resolve: (_, args) => {
-    return createEvent(_, args)
+    return createEvent(_, args);
   }
 }
 
 export const EventMutation = new GraphQLObjectType({
   name: 'EventMutation',
   description: 'The root event mutation.',
-  fields: {
+  fields: () => ({
     create: CreateEvent
-  }
+  })
 })

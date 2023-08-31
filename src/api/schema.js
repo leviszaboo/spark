@@ -5,6 +5,8 @@ import {
 import { EventQuery } from "./entities/events/query.js"
 import { EventMutation } from "./entities/events/mutation.js"
 import { UserMutation } from "./entities/users/mutations.js"
+import { BookingMutation } from "./entities/bookings/mutation.js"
+import { BookingQuery } from "./entities/bookings/query.js"
 
 const RootQueryType = new GraphQLObjectType({
   name: "Query",
@@ -13,7 +15,12 @@ const RootQueryType = new GraphQLObjectType({
     events: {
       type: EventQuery,
       description: EventQuery.description,
-      resolve: () => { return {} }
+      resolve: () => ({})
+    },
+    bookings: {
+      type: BookingQuery,
+      description: BookingQuery.description,
+      resolve: () => ({})
     }
   }),
 })
@@ -25,11 +32,16 @@ const RootMutationType = new GraphQLObjectType({
     events: {
       type: EventMutation,
       description: EventMutation.description,
-      resolve: () => { return {} }
+      resolve: () => ({})
     },
     users: {
       type: UserMutation,
       description: UserMutation.description,
+      resolve: () => ({})
+    },
+    bookings: {
+      type: BookingMutation,
+      description: BookingMutation.description,
       resolve: () => ({})
     }
   })
