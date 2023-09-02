@@ -1,5 +1,5 @@
 import { GraphQLObjectType } from "graphql";
-import { bookEvent, cancelBooking } from "./resolvers/mutationResolvers.js";
+import { bookEvent, cancelBooking } from "./resolvers.js"
 import { BookingInputType, BookingType, CancelBookingInputType } from "./type.js";
 import { EventType } from "../events/type.js";
 
@@ -11,8 +11,8 @@ const BookEvent = {
       type: BookingInputType
     }
   },
-  resolve: (_, args) => {
-    return bookEvent(_, args);
+  resolve: (_, args, context) => {
+    return bookEvent(_, args, context);
   }
 }
 
@@ -24,8 +24,8 @@ const CancelEvent = {
       type: CancelBookingInputType
     }
   },
-  resolve: (_, args) => {
-    return cancelBooking(_, args);
+  resolve: (_, args, context) => {
+    return cancelBooking(_, args, context);
   }
 }
 

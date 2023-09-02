@@ -1,8 +1,12 @@
-import { Booking } from "../../../../models/booking.js"
-import { Event } from "../../../../models/event.js";
-import { User } from "../../../../models/user.js";
+import { Booking } from "../../../models/booking.js"
+import { Event } from "../../../models/event.js";
+import { User } from "../../../models/user.js";
 
-export async function bookEvent(_, args) {
+export async function bookEvent(_, args, context) {
+  if (!context.request.isAuth) {
+    throw new Error("Unauthenticated")
+  }
+
   const eventId = args.bookingInput.eventId
   const fetchedEvent = await Event.findById(eventId)
 
@@ -29,6 +33,10 @@ export async function bookEvent(_, args) {
 }
 
 export async function cancelBooking(_, args) {
+  if (!context.request.isAuth) {
+    throw new Error("Unauthenticated")
+  }
+  
   try { 
     const bookingId = args.cancelBookingInput.bookingId;
     const booking = await Booking.findById(bookingId).populate('event');
@@ -43,6 +51,22 @@ export async function cancelBooking(_, args) {
 
     await Booking.findByIdAndDelete(bookingId);
     return event
+  } catch(err) {
+    throw err
+  }
+}
+
+export async function getBookings() {
+  try {
+    const bookings = await Booking.find().populate('event').populate('user');
+
+    return bookings.map((booking) => {
+      return { 
+        ...booking._doc, 
+        createdAt: new Date(booking.createdAt).toISOString(),
+        updatedAt: new Date(booking.updatedAt).toISOString()  
+      }
+    })
   } catch(err) {
     throw err
   }

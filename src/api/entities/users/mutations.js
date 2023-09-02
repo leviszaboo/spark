@@ -1,12 +1,12 @@
 import { GraphQLObjectType } from "graphql";
 
 import { UserType, UserInputType } from "./type.js";
-import { createUser } from "./resolvers/mutationResolvers.js";
+import { createUser } from "./resolvers.js";
 
 const CreateUser = {
-  type: UserType,
   name: 'CreateUser',
   description: "Create a new user",
+  type: UserType,
   args: {
     userInput: {
       type: UserInputType

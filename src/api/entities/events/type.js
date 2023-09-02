@@ -3,7 +3,8 @@ import {
   GraphQLInputObjectType,
   GraphQLString,
   GraphQLFloat,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLID
 } from "graphql"
 
 import { UserType } from "../users/type.js"
@@ -13,7 +14,7 @@ export const EventType = new GraphQLObjectType({
   description: "Information about an event.",
   fields: () => ({
     _id: {
-      type: GraphQLNonNull(GraphQLString)
+      type: GraphQLNonNull(GraphQLID)
     },
     title: {
       type: GraphQLNonNull(GraphQLString)

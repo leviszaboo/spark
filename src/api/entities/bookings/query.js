@@ -3,7 +3,7 @@ import {
     GraphQLNonNull,
     GraphQLObjectType,
  } from "graphql";
-import { getBookings } from "./resolvers/queryResolvers.js";
+import { getBookings } from "./resolvers.js";
 import { BookingType } from "./type.js";
 
 const GetBookings = {

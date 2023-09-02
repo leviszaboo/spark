@@ -1,7 +1,7 @@
 import { GraphQLObjectType } from "graphql";
 
 import { EventType, EventInputType } from "./type.js";
-import { createEvent } from "./resolvers/mutationsResolvers.js";
+import { createEvent } from "./resolvers.js";
 
 
 const CreateEvent = {
@@ -13,8 +13,8 @@ const CreateEvent = {
       type: EventInputType
     }
   },
-  resolve: (_, args) => {
-    return createEvent(_, args);
+  resolve: (_, args, context) => {
+    return createEvent(_, args, context);
   }
 }
 

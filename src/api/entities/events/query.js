@@ -5,7 +5,7 @@ import {
 } from "graphql";
 
 import { EventType } from "./type.js";
-import { getEvents } from "./resolvers/queryResolvers.js";
+import { getEvents } from "./resolvers.js";
 
 const GetEvents = {
   type: GraphQLNonNull(GraphQLList(GraphQLNonNull(EventType))),

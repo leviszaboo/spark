@@ -3,7 +3,9 @@ import {
   GraphQLInputObjectType,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLList 
+  GraphQLList,
+  GraphQLID, 
+  GraphQLInt
 } from "graphql";
 
 import { Event } from "../../../models/event.js";
@@ -14,7 +16,7 @@ export const UserType = new GraphQLObjectType({
   description: "Information about a user.",
   fields: () => ({
     _id: {
-      type: GraphQLNonNull(GraphQLString)
+      type: GraphQLNonNull(GraphQLID)
     },
     email: {
       type: GraphQLNonNull(GraphQLString)
@@ -45,6 +47,22 @@ export const UserInputType = new GraphQLInputObjectType({
     },
     password: {
       type: GraphQLNonNull(GraphQLString)
+    }
+  })
+})
+
+export const AuthDataType = new GraphQLObjectType({
+  name: "AuthData",
+  description: "Data returned on login.",
+  fields: () => ({
+    userId: { 
+      type: GraphQLNonNull(GraphQLID)
+    },
+    token: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    tokenExpiration: {
+      type: GraphQLNonNull(GraphQLInt)
     }
   })
 })

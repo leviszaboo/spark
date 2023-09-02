@@ -1,4 +1,5 @@
 import { 
+  GraphQLID,
   GraphQLInputObjectType,
   GraphQLNonNull, 
   GraphQLObjectType, 
@@ -12,7 +13,7 @@ export const BookingType = new GraphQLObjectType({
   description: "Booking",
   fields: () => ({
     _id: {
-      type: GraphQLNonNull(GraphQLString)
+      type: GraphQLNonNull(GraphQLID)
     },
     event: {
       type: GraphQLNonNull(EventType)
