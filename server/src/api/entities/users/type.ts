@@ -12,8 +12,10 @@ import {
 
 import { Event } from "../../../models/event.ts";
 import { EventType } from "../events/type.ts";
+import { IUser } from "../../../interfaces/interfaces.ts";
+import { getCreatedEvents } from "./resolvers.ts";
 
-export const UserType: GraphQLObjectType = new GraphQLObjectType({
+export const UserType: GraphQLObjectType<any, any> = new GraphQLObjectType({
   name: "User",
   description: "Information about a user.",
   fields: () => ({
@@ -28,19 +30,14 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
     },
     createdEvents: {
       type: GraphQLList(GraphQLNonNull(EventType)),
-      resolve: async (user) => {
-        try {
-          const events = await Event.find({ creator: user._id });
-          return events.map(event => ({ ...event }));
-        } catch (err) {
-          throw err;
-        }
+      resolve: (user: IUser) => {
+        return getCreatedEvents(user)
       }
     }
   })
 })
 
-export const UserInputType = new GraphQLInputObjectType({
+export const UserInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
   name: "UserInput",
   description: "Input type to create a new user",
   fields: () => ({
@@ -53,7 +50,7 @@ export const UserInputType = new GraphQLInputObjectType({
   })
 })
 
-export const AuthDataType = new GraphQLObjectType({
+export const AuthDataType: GraphQLObjectType<any, any>  = new GraphQLObjectType({
   name: "AuthData",
   description: "Data returned on login.",
   fields: () => ({

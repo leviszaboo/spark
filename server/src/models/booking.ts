@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 
+import { IBooking } from "../interfaces/interfaces";
+
 const Schema = mongoose.Schema;
 
-const BookingSchema = new Schema(
+const BookingSchema = new Schema<IBooking>(
   {
     event: {
       type: Schema.Types.ObjectId,

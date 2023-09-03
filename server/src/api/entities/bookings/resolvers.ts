@@ -62,7 +62,7 @@ export async function getBookings() {
 
     return bookings.map((booking) => {
       return { 
-        ...booking, 
+        ...booking._doc, 
         createdAt: new Date(booking.createdAt).toISOString(),
         updatedAt: new Date(booking.updatedAt).toISOString()  
       }

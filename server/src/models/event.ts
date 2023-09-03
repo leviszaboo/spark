@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 
+import { IEvent } from "../interfaces/interfaces";
+
 const Schema = mongoose.Schema;
 
-const eventSchema = new Schema({
+const eventSchema = new Schema<IEvent>({
     title: {
       type: String,
       required: true,

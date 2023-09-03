@@ -2,7 +2,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { User } from "../../../models/user.ts";
+import { IUser } from "../../../interfaces/interfaces.ts";
 
+import { Event } from "../../../models/event.ts";
 
 export async function createUser(_: any, args: any) {
   try {
@@ -60,5 +62,15 @@ export async function login(_: any, args: any) {
     return { userId: user.id, token: token, tokenExpiration: 1}
   } catch(err) {
     throw err
+  }
+}
+
+export async function getCreatedEvents(user: IUser) {
+  try {
+    const events = await Event.find({ creator: user._id });
+    console.log("from user:", events[0]._doc)
+    return events.map(event => ({ ...event._doc }));
+  } catch (err) {
+    throw err;
   }
 }

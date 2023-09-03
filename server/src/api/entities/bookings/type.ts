@@ -8,7 +8,7 @@ import {
 import { EventType } from "../events/type.ts";
 import { UserType } from "../users/type.ts";
 
-export const BookingType = new GraphQLObjectType({
+export const BookingType: GraphQLObjectType<any, any>  = new GraphQLObjectType({
   name: "Booking",
   description: "Booking",
   fields: () => ({
@@ -30,7 +30,7 @@ export const BookingType = new GraphQLObjectType({
   })
 })
 
-export const BookingInputType = new GraphQLInputObjectType({
+export const BookingInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
   name:"BookingInput",
   description: "Input to book an event",
   fields: () => ({
@@ -40,7 +40,7 @@ export const BookingInputType = new GraphQLInputObjectType({
   })
 })
 
-export const CancelBookingInputType = new GraphQLInputObjectType({
+export const CancelBookingInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
   name:"CancelBookingInput",
   description: "Input to cancel a booking",
   fields: () => ({

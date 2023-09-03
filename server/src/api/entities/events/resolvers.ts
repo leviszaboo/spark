@@ -4,7 +4,10 @@ import { Event } from "../../../models/event.ts";
 export async function getEvents() { 
   try {
     const events = await Event.find().populate('creator');
-    return events.map(event => ({ ...event._doc }));
+    return events.map(event => {
+      console.log(event.title)
+      return event
+    });
   } catch (err) {
     throw err;
   }
@@ -38,10 +41,9 @@ export async function createEvent(_: any, args: any, context: any) {
       throw new Error("User not found");
     }
 
-    user.createdEvents.push(savedEvent.id);
+    user.createdEvents.push(savedEvent);
     await user.save();
-
-    return savedEvent;
+    return savedEvent._doc;
   } catch (err) {
     throw err;
   }
