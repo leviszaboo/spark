@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export function authenticate(req, res, next) {
+export function authenticate(req, _res, next) {
   const authHeader = req.get("Authorization");
 
   if (!authHeader) {
@@ -9,7 +9,6 @@ export function authenticate(req, res, next) {
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("token:", token)
 
   if (!token || token === "") {
     req.isAuth = false;

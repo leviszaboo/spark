@@ -3,7 +3,7 @@ import { Event } from "../../../models/event.js";
 import { User } from "../../../models/user.js";
 
 export async function bookEvent(_, args, context) {
-  if (!context.request.isAuth) {
+  if (!context.req.isAuth) {
     throw new Error("Unauthenticated")
   }
 
@@ -33,10 +33,10 @@ export async function bookEvent(_, args, context) {
 }
 
 export async function cancelBooking(_, args) {
-  if (!context.request.isAuth) {
+  if (!context.req.isAuth) {
     throw new Error("Unauthenticated")
   }
-  
+
   try { 
     const bookingId = args.cancelBookingInput.bookingId;
     const booking = await Booking.findById(bookingId).populate('event');

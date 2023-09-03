@@ -11,7 +11,7 @@ export async function getEvents() {
 }
 
 export async function createEvent(_, args, context) {
-  if (!context.isAuth) {
+  if (!context.req.isAuth) {
     throw new Error("Unauthenticated")
   }
 
@@ -28,7 +28,7 @@ export async function createEvent(_, args, context) {
       description,
       price: +price,
       date,
-      creator: "64ee6c2fa48a82b53729cbc1"
+      creator: context.req.userId
     });
 
     const savedEvent = await event.save();
