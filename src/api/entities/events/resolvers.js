@@ -32,7 +32,7 @@ export async function createEvent(_, args, context) {
     });
 
     const savedEvent = await event.save();
-    const user = await User.findById("64ee6c2fa48a82b53729cbc1");
+    const user = await User.findById(context.req.userId);
 
     if (!user) {
       throw new Error("User not found");
