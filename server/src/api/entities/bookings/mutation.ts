@@ -1,17 +1,30 @@
-import { GraphQLFieldConfig, GraphQLObjectType } from "graphql";
-import { bookEvent, cancelBooking } from "./resolvers.ts"
-import { BookingInputType, BookingType, CancelBookingInputType } from "./type.ts";
+import { 
+  GraphQLFieldConfig, 
+  GraphQLObjectType,
+  GraphQLNonNull,
+  GraphQLString 
+} from "graphql";
+
+import { 
+  bookEvent, 
+  cancelBooking 
+} from "./resolvers.ts"
+import { BookingType } from "./type.ts";
 import { EventType } from "../events/type.ts";
+import { 
+  BookingInput, 
+  CancelBookingInput 
+} from "../../../interfaces/interfaces.ts";
 
 const BookEvent: GraphQLFieldConfig<any, any, any> = {
   type: BookingType,
   description: "Book an event.",
   args: {
-    bookingInput: {
-      type: BookingInputType
+    eventId: {
+      type: GraphQLNonNull(GraphQLString),
     }
   },
-  resolve: (_, args, context) => {
+  resolve: (_, args: BookingInput, context) => {
     return bookEvent(_, args, context);
   }
 }
@@ -20,11 +33,11 @@ const CancelEvent: GraphQLFieldConfig<any, any, any> = {
   type: EventType,
   description: "Book an event.",
   args: {
-    cancelBookingInput: {
-      type: CancelBookingInputType
+    bookingId: {
+      type: GraphQLNonNull(GraphQLString),
     }
   },
-  resolve: (_, args, context) => {
+  resolve: (_, args: CancelBookingInput, context) => {
     return cancelBooking(_, args, context);
   }
 }

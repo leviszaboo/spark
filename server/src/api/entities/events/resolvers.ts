@@ -1,11 +1,11 @@
 import { User } from "../../../models/user.ts";
 import { Event } from "../../../models/event.ts";
+import { EventInput } from "../../../interfaces/interfaces.ts";
 
 export async function getEvents() { 
   try {
     const events = await Event.find().populate('creator');
     return events.map(event => {
-      console.log(event.title)
       return event
     });
   } catch (err) {
@@ -13,19 +13,12 @@ export async function getEvents() {
   }
 }
 
-export async function createEvent(_: any, args: any, context: any) {
+export async function createEvent(_: any, {title, description, price, date}: EventInput, context: any) {
   if (!context.req.isAuth) {
     throw new Error("Unauthenticated")
   }
 
   try {
-    const {
-      title,
-      description,
-      date,
-      price,
-    } = args.eventInput
-
     const event = new Event({
       title,
       description,
@@ -43,7 +36,8 @@ export async function createEvent(_: any, args: any, context: any) {
 
     user.createdEvents.push(savedEvent);
     await user.save();
-    return savedEvent._doc;
+
+    return { ...savedEvent._doc, creator: user};
   } catch (err) {
     throw err;
   }

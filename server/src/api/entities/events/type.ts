@@ -33,22 +33,3 @@ export const EventType = new GraphQLObjectType({
     }
   })
 })
-
-export const EventInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
-  name: "EventInput",
-  description: "Input type to create a new event",
-  fields: () => ({
-    title: {
-      type: GraphQLNonNull(GraphQLString)
-    },
-    description: {
-      type: GraphQLNonNull(GraphQLString)
-    },
-    price: {
-      type: GraphQLNonNull(GraphQLFloat)
-    },
-    date: {
-      type: GraphQLNonNull(GraphQLString)
-    }
-  })
-})

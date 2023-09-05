@@ -9,10 +9,8 @@ import { BookingType } from "./type.ts";
 const GetBookings = {
   type: GraphQLNonNull(GraphQLList(GraphQLNonNull(BookingType))),
   description: "Query all bookings",
-  resolve: async () => {
-    const bookings = await getBookings();
-    console.log(bookings)
-    return bookings
+  resolve: () => {
+    return getBookings()
   }
 }
 

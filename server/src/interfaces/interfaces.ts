@@ -13,7 +13,7 @@ export interface IEvent extends DocumentResult<IEvent> {
   creator: Types.ObjectId
 }
 
-export interface IBooking extends DocumentResult<IBooking>{
+export interface IBooking extends DocumentResult<IBooking> {
   _id: Types.ObjectId
   event: Types.ObjectId,
   user: Types.ObjectId,
@@ -21,10 +21,29 @@ export interface IBooking extends DocumentResult<IBooking>{
   updatedAt: Date
 }
 
-export interface IUser extends DocumentResult<IUser>{
+export interface IUser extends DocumentResult<IUser> {
   _id: Types.ObjectId
   email: string,
   password: string,
   createdEvents: IEvent[]
 }
+
+export interface UserInput {
+  email: string, 
+  password: string
+}
+
+export interface EventInput {
+  title: string, 
+  description: string,
+  price: number,
+  date: string
+}
+
+export interface BookingInput {
+  eventId: string,
+}
   
+export interface CancelBookingInput {
+  bookingId: string,
+}

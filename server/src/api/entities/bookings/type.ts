@@ -1,6 +1,5 @@
 import { 
   GraphQLID,
-  GraphQLInputObjectType,
   GraphQLNonNull, 
   GraphQLObjectType, 
   GraphQLString
@@ -26,26 +25,6 @@ export const BookingType: GraphQLObjectType<any, any>  = new GraphQLObjectType({
     },
     updatedAt: {
       type: GraphQLNonNull(GraphQLString)
-    }
-  })
-})
-
-export const BookingInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
-  name:"BookingInput",
-  description: "Input to book an event",
-  fields: () => ({
-    eventId: {
-      type: GraphQLNonNull(GraphQLString),
-    }
-  })
-})
-
-export const CancelBookingInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
-  name:"CancelBookingInput",
-  description: "Input to cancel a booking",
-  fields: () => ({
-    bookingId: {
-      type: GraphQLNonNull(GraphQLString),
     }
   })
 })

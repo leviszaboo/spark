@@ -6,11 +6,8 @@ import {
   GraphQLList,
   GraphQLID, 
   GraphQLInt,
-  GraphQLScalarType,
-  GraphQLObjectTypeConfig
 } from "graphql";
 
-import { Event } from "../../../models/event.ts";
 import { EventType } from "../events/type.ts";
 import { IUser } from "../../../interfaces/interfaces.ts";
 import { getCreatedEvents } from "./resolvers.ts";
@@ -33,19 +30,6 @@ export const UserType: GraphQLObjectType<any, any> = new GraphQLObjectType({
       resolve: (user: IUser) => {
         return getCreatedEvents(user)
       }
-    }
-  })
-})
-
-export const UserInputType: GraphQLInputObjectType = new GraphQLInputObjectType({
-  name: "UserInput",
-  description: "Input type to create a new user",
-  fields: () => ({
-    email: {
-      type: GraphQLNonNull(GraphQLString)
-    },
-    password: {
-      type: GraphQLNonNull(GraphQLString)
     }
   })
 })

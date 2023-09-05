@@ -2,17 +2,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { User } from "../../../models/user.ts";
-import { IUser } from "../../../interfaces/interfaces.ts";
+import { IUser, UserInput } from "../../../interfaces/interfaces.ts";
 
 import { Event } from "../../../models/event.ts";
 
-export async function createUser(_: any, args: any) {
+export async function createUser(_: any, { email, password }: UserInput) {
   try {
-    const {
-      email,
-      password
-    } = args.userInput;
-
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -35,13 +30,9 @@ export async function createUser(_: any, args: any) {
   }
 }
 
-export async function login(_: any, args: any) {
+export async function login(_: any, { email, password }: UserInput) {
   try {
-    const {
-      email,
-      password
-    } = args.userInput;
-
+    console.log(email)
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -67,8 +58,8 @@ export async function login(_: any, args: any) {
 
 export async function getCreatedEvents(user: IUser) {
   try {
-    const events = await Event.find({ creator: user._id });
-    console.log("from user:", events[0]._doc)
+    const events = await Event.find({ creator: user._id }).populate('creator');
+    //console.log("from user:", events[0]._doc)
     return events.map(event => ({ ...event._doc }));
   } catch (err) {
     throw err;

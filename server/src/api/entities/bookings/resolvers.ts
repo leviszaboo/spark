@@ -1,28 +1,30 @@
+import { BookingInput, CancelBookingInput } from "../../../interfaces/interfaces.ts";
 import { Booking } from "../../../models/booking.ts"
 import { Event } from "../../../models/event.ts";
 import { User } from "../../../models/user.ts";
 
-export async function bookEvent(_: any, args: any, context: any) {
+export async function bookEvent(_: any, { eventId }: BookingInput, context: any) {
   if (!context.req.isAuth) {
     throw new Error("Unauthenticated")
   }
 
-  const eventId = args.bookingInput.eventId
-  const fetchedEvent = await Event.findById(eventId)
+  const event = await Event.findById(eventId)
 
-  if (!fetchedEvent) {
+  if (!event) {
     throw new Error("Event doesn't exist.")
   }
 
   try {
     const booking = new Booking({
-      user: "64ee6c2fa48a82b53729cbc1",
-      event: fetchedEvent
+      user: context.req.userId,
+      event: event._id
     });
     const result = await booking.save();
     const user = await User.findById(booking.user)
+
     return { 
       ...result,
+      event: event.populate('creator'),
       user: user,
       createdAt: new Date(result.createdAt).toISOString(),
       updatedAt: new Date(result.updatedAt).toISOString()   
@@ -32,25 +34,22 @@ export async function bookEvent(_: any, args: any, context: any) {
   }
 }
 
-export async function cancelBooking(_: any, args: any, context: any) {
+export async function cancelBooking(_: any, { bookingId } : CancelBookingInput, context: any) {
   if (!context.req.isAuth) {
     throw new Error("Unauthenticated")
   }
 
   try { 
-    const bookingId = args.cancelBookingInput.bookingId;
-    const booking = await Booking.findById(bookingId).populate('event');
+    const booking = await Booking.findById(bookingId);
   
     if (!booking) {
       throw new Error("Booking not found")
     }
 
-    const event = {
-      ...booking.event
-    }
+    const event = Event.findById(booking.event)
 
     await Booking.findByIdAndDelete(bookingId);
-    return event
+    return { ...event }
   } catch(err) {
     throw err
   }

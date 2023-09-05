@@ -1,18 +1,34 @@
-import { GraphQLFieldConfig, GraphQLObjectType } from "graphql";
+import { 
+  GraphQLFieldConfig, 
+  GraphQLObjectType,
+  GraphQLNonNull,
+  GraphQLString, 
+  GraphQLFloat
+} from "graphql";
 
-import { EventType, EventInputType } from "./type.ts";
+import { EventType } from "./type.ts";
 import { createEvent } from "./resolvers.ts";
+import { EventInput } from "../../../interfaces/interfaces.ts";
 
 
 const CreateEvent: GraphQLFieldConfig<any, any, any> = {
   type: EventType,
   description: "Create a new event",
   args: {
-    eventInput: {
-      type: EventInputType
+    title: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    description: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    price: {
+      type: GraphQLNonNull(GraphQLFloat)
+    },
+    date: {
+      type: GraphQLNonNull(GraphQLString)
     }
   },
-  resolve: (_, args, context) => {
+  resolve: (_, args: EventInput, context) => {
     return createEvent(_, args, context);
   }
 }

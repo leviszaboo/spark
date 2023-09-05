@@ -1,14 +1,17 @@
-import { GraphQLFieldConfig, GraphQLObjectType } from "graphql";
+import { GraphQLFieldConfig, GraphQLObjectType, GraphQLNonNull, GraphQLString } from "graphql";
 
-import { UserType, UserInputType } from "./type.ts";
+import { UserType } from "./type.ts";
 import { createUser } from "./resolvers.ts";
 
 const CreateUser: GraphQLFieldConfig<any, any, any> = {
   description: "Create a new user",
   type: UserType,
   args: {
-    userInput: {
-      type: UserInputType
+    email: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    password: {
+      type: GraphQLNonNull(GraphQLString)
     }
   },
   resolve: (_, args) => {

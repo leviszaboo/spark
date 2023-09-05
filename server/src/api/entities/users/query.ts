@@ -1,21 +1,26 @@
 import { 
   GraphQLFieldConfig,
     GraphQLNonNull,
-    GraphQLObjectType
+    GraphQLObjectType,
+    GraphQLString
   } from "graphql";
   
-import { AuthDataType, UserInputType } from "./type.ts";
+import { AuthDataType } from "./type.ts";
 import { login } from "./resolvers.ts";
+import { UserInput } from "../../../interfaces/interfaces.ts";
 
 const Login: GraphQLFieldConfig<any, any, any> = {
   description: "Log in a user",
   type: GraphQLNonNull(AuthDataType),
   args: {
-    userInput: {
-      type: UserInputType
+    email: {
+      type: GraphQLNonNull(GraphQLString)
+    },
+    password: {
+      type: GraphQLNonNull(GraphQLString)
     }
   },
-  resolve: (_, args) => {
+  resolve: (_, args: UserInput) => {
     return login(_, args);
   }
 }
